@@ -1,0 +1,144 @@
+:root {
+  --pale-shadow: 0 2px 15px rgba(0, 0, 0, 0.075);
+  --base-shadow: 0 1px 10px rgba(0, 0, 0, 0.2);
+  --hover-shadow: 3px 7px 15px rgba(0, 0, 0, 0.1),
+    -1px 3px 25px rgba(0, 0, 0, 0.1);
+  --cyan900: #0a2129;
+  --cyan800: #154251;
+  --cyan700: #1f637a;
+  --cyan600: #2984a3;
+  --cyan500: #34a5cb;
+  --cyan400: #5cb7d6;
+  --cyan300: #85c9e0;
+  --cyan200: #aedbea;
+  --cyan100: #d6edf5;
+  --cyan50: #ebf6fa;
+  --green900: #18260d;
+  --green800: #304c1a;
+  --green700: #487227;
+  --green600: #609834;
+  --green500: #79bf42;
+  --green400: #93cb67;
+  --green300: #aed88d;
+  --green200: #c9e5b3;
+  --green100: #e4f2d9;
+  --green50: #f1f9ec;
+  --yellow900: #302303;
+  --yellow800: #5f4707;
+  --yellow700: #8f6a0a;
+  --yellow600: #bf8e0d;
+  --yellow500: #efb212;
+  --yellow400: #f2c140;
+  --yellow300: #f5d070;
+  --yellow200: #f8e0a0;
+  --yellow100: #fcefcf;
+  --yellow50: #fdf7e7;
+  --red900: #260d11;
+  --red800: #4d1922;
+  --red700: #732634;
+  --red600: #9a3245;
+  --red500: #c03f56;
+  --red400: #cd6578;
+  --red300: #d98c9a;
+  --red200: #e6b2bb;
+  --red100: #f2d9dd;
+  --red50: #f9ecee;
+  --coolGray900: #141c1f;
+  --coolGray800: #27383f;
+  --coolGray700: #3b545e;
+  --coolGray600: #4e707e;
+  --coolGray500: #628c9d;
+  --coolGray400: #81a3b1;
+  --coolGray300: #a1bac4;
+  --coolGray200: #c0d1d8;
+  --coolGray100: #e0e8eb;
+  --coolGray50: #eff4f5;
+  --gray900: #1a1a1a;
+  --gray800: #333333;
+  --gray700: #4d4d4d;
+  --gray600: #666666;
+  --gray500: #808080;
+  --gray400: #999999;
+  --gray300: #b3b3b3;
+  --gray200: #cccccc;
+  --gray100: #e6e6e6;
+  --gray50: #f2f2f2;
+  --inset-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  --base-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+  --hover-shadow: 0 2px 15px rgba(0, 0, 0, 0.15);
+}
+* {
+  transition: opacity 0.2s ease-out, background-color 0.2s ease-out,
+    transform 0.2s, box-shadow 0.2s;
+}
+
+html {
+  margin: 0;
+  font-family: 'Fira Code', Courier, monospace;
+  padding: 0;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  font: 20px/1.45 'Fira Code', Courier, monospace;
+  box-sizing: border-box;
+  overflow-y: scroll;
+  font-size: 10px;
+}
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: inherit;
+  font-weight: normal;
+  word-wrap: break-word;
+  font-kerning: normal;
+  -moz-font-feature-settings: 'kern', 'liga', 'clig', 'calt';
+  -ms-font-feature-settings: 'kern', 'liga', 'clig', 'calt';
+  -webkit-font-feature-settings: 'kern', 'liga', 'clig', 'calt';
+  font-feature-settings: 'kern', 'liga', 'clig', 'calt';
+  color: var(--coolGray800);
+  --text-color: var(--coolGray800);
+  --menu-bg: #fff;
+  --title-color: var(--cyan800);
+  --menu-icon: var(--title-color);
+  --bg: var(--coolGray50);
+  --meter-bg: var(--coolGray100);
+  --meter-tick: var(--coolGray200);
+  --minute-meter: var(--coolGray300);
+  --second-meter: var(--coolGray200);
+  --clock-bg: #fff;
+  background-color: var(--bg);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+body.dark {
+  --bg: var(--coolGray900);
+  background-color: var(--bg);
+  color: var(--coolGray200);
+  --title-color: #fff;
+  --text-color: var(--coolGray200);
+  --menu-bg: var(--cyan800);
+  --meter-bg: var(--coolGray700);
+  --meter-tick: var(--coolGray500);
+  --minute-meter: var(--coolGray500);
+  --second-meter: var(--coolGray500);
+  --clock-bg: var(--coolGray800);
+}
+*,
+* > * {
+  box-sizing: border-box;
+}
+h1 {
+  font-size: 20px;
+  display: inline-block;
+  margin: 0 0.75em 0;
+  color: var(--title-color);
+}
+h3 {
+  margin: 0 0 0.75em 0;
+  color: var(--text-color);
+}
