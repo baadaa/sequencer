@@ -6,17 +6,26 @@
 import * as React from 'react';
 import * as Tone from 'tone';
 import styled from 'styled-components';
+import { Logo } from './components/Icons';
 import { defaultNoteMatrix, emptyBeat, SCALES } from './data';
-import { useCallback } from 'react';
+const Wrapper = styled.div`
+  padding: 2rem 1rem 1rem;
+  background-color: #fff;
+  border: 1px solid var(--coolGray100);
+  box-shadow: var(--base-shadow);
+  border-radius: 1.5rem;
+  svg {
+    margin: 0 auto;
+    display: block;
+    margin-bottom: 1.5rem;
+  }
+`;
 const GridStyle = styled.div`
-  width: 52rem;
+  width: 55rem;
   height: 50rem;
   display: flex;
   padding: 0.5rem 0;
   margin-bottom: 1rem;
-  background-color: #fff;
-  border: 1px solid var(--coolGray100);
-  box-shadow: var(--base-shadow);
   grid-template-columns: repeat(17, 1fr);
   .beat {
     display: flex;
@@ -66,6 +75,8 @@ const GridStyle = styled.div`
   }
 `;
 
+const synth = new Tone.PolySynth().toDestination();
+
 function App() {
   type Loop = {
     dispose: any;
@@ -75,7 +86,6 @@ function App() {
   const [currentBPM, setCurrentBPM] = React.useState(120);
   const [noteMatrix, setNoteMatrix] = React.useState(defaultNoteMatrix);
   const [currentScale, setCurrentScale] = React.useState(SCALES.major);
-  const synth = new Tone.PolySynth().toDestination();
   const loop = React.useRef<Loop | null>(null);
   const noteMap = noteMatrix.map(beat =>
     beat
@@ -98,7 +108,7 @@ function App() {
     updatedMatrix[currentBeat][selectedNote] = isOn;
     setNoteMatrix(updatedMatrix);
   };
-  const reset = useCallback(() => {
+  const reset = React.useCallback(() => {
     setNoteMatrix([
       [...emptyBeat],
       [...emptyBeat],
@@ -121,27 +131,14 @@ function App() {
     Tone.Transport.stop();
   }, []);
 
-  // const repeat = () => {
-  //   synth.triggerAttackRelease(noteMap[currentBeat], '16n');
-  //   setCurrentBeat((currentBeat + 1) % 16);
-  // };
   React.useEffect(() => {
     Tone.Transport.loop = false;
-    // Tone.Transport.scheduleRepeat(repeat, '16n'); // Tone.Transport.loop = true;
-    // Tone.Transport.loopEnd = '1m';
     Tone.Transport.on('stop', () => setCurrentBeat(0));
-  });
+  }, []);
   React.useEffect(() => {
     Tone.Transport.bpm.value = currentBPM;
   }, [currentBPM]);
   React.useEffect(() => {
-    // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].forEach(i => {
-    //   synth.triggerAttackRelease(
-    //     noteMap[i],
-    //     '16n',
-    //     i * (Tone.Time('1m').toSeconds() / 16)
-    //   );
-    // });
     if (loop.current) {
       loop.current.dispose();
     }
@@ -160,7 +157,8 @@ function App() {
     setIsPlaying(isPlaying => !isPlaying);
   }, []);
   return (
-    <>
+    <Wrapper>
+      <Logo />
       <GridStyle>
         <div className="beat">
           {currentScale.map((note, i) => (
@@ -213,7 +211,7 @@ function App() {
           </option>
         ))}
       </select>
-    </>
+    </Wrapper>
   );
 }
 
