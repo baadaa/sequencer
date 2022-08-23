@@ -14,20 +14,22 @@ const Wrapper = styled.div`
   box-shadow: var(--base-shadow);
   border-radius: 1.5rem;
   h1 {
-    font-size: 1.6rem;
+    font-size: 1.3em;
+    font-weight: 700;
     line-height: 1;
     margin: 0 auto 1rem;
     display: block;
     text-align: center;
-    text-decoration: uppercase;
-    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    letter-spacing: 1.3em;
   }
 `;
 const GridStyle = styled.div`
+  --gap: 0.7rem;
   width: 55rem;
   height: 50rem;
   display: flex;
-  padding: 0.5rem 0;
+  padding: var(--gap) 0;
   margin-bottom: 1rem;
   grid-template-columns: repeat(17, 1fr);
   .beat {
@@ -43,8 +45,8 @@ const GridStyle = styled.div`
       }
     }
     &:nth-of-type(4n + 1) {
-      border-right: 1px solid var(--coolGray200);
-      padding-right: 0.5rem;
+      border-right: 1px solid var(--coolGray50);
+      padding-right: var(--gap);
     }
     &:last-of-type {
       border-right: none;
@@ -52,7 +54,7 @@ const GridStyle = styled.div`
   }
 
   .beat + .beat {
-    margin-left: 0.5rem;
+    margin-left: var(--gap);
   }
   .head,
   .note {
@@ -74,7 +76,7 @@ const GridStyle = styled.div`
     justify-content: center;
   }
   .note + .note {
-    margin-top: 0.5rem;
+    margin-top: var(--gap);
   }
 `;
 
@@ -161,7 +163,7 @@ function App() {
   }, []);
   return (
     <Wrapper>
-      <h1>Bare-bones music sequencer</h1>
+      <h1>Bare-bones sequencer</h1>
       <GridStyle>
         <div className="beat">
           {currentScale.map((note, i) => (
