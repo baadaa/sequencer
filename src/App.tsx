@@ -6,7 +6,6 @@
 import * as React from 'react';
 import * as Tone from 'tone';
 import styled from 'styled-components';
-import { Logo } from './components/Icons';
 import { defaultNoteMatrix, emptyBeat, SCALES } from './data';
 const Wrapper = styled.div`
   padding: 2rem 1rem 1rem;
@@ -14,10 +13,14 @@ const Wrapper = styled.div`
   border: 1px solid var(--coolGray100);
   box-shadow: var(--base-shadow);
   border-radius: 1.5rem;
-  svg {
-    margin: 0 auto;
+  h1 {
+    font-size: 1.6rem;
+    line-height: 1;
+    margin: 0 auto 1rem;
     display: block;
-    margin-bottom: 1.5rem;
+    text-align: center;
+    text-decoration: uppercase;
+    letter-spacing: 0.5em;
   }
 `;
 const GridStyle = styled.div`
@@ -158,7 +161,7 @@ function App() {
   }, []);
   return (
     <Wrapper>
-      <Logo />
+      <h1>Bare-bones music sequencer</h1>
       <GridStyle>
         <div className="beat">
           {currentScale.map((note, i) => (
