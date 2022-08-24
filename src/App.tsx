@@ -1,4 +1,4 @@
-// https://www.maxlaumeister.com/tonematrix/ for functionality
+// https://www.maxlaumeister.com/tonematrix/ for functionality, filter and synth options
 // https://codesandbox.io/s/sequencer-demo-wjgg4?file=/src/Sequencer.js for sequencing reference with Tone.Sequencer
 // https://medium.com/geekculture/creating-a-step-sequencer-with-tone-js-32ea3002aaf5#d7bc for sequencing reference with Tone.Transport.scheduleRepeat (mono synth)
 // https://www.devbridge.com/articles/tonejs-coding-music-production-guide/ for production sample
@@ -7,6 +7,8 @@ import * as React from 'react';
 import * as Tone from 'tone';
 import styled from 'styled-components';
 import { defaultNoteMatrix, emptyBeat, SCALES } from './data';
+import { OscillatorType } from './types/soundTypes';
+
 const Wrapper = styled.div`
   padding: 2rem 1rem 1rem;
   background-color: #fff;
@@ -80,15 +82,18 @@ const GridStyle = styled.div`
   }
 `;
 
-const synth = new Tone.PolySynth().toDestination();
-synth.set({
+const filter = new Tone.Filter({
+  frequency: 1100,
+  rolloff: -12,
+}).toDestination();
+const synth = new Tone.PolySynth().connect(filter).set({
   envelope: {
-    decay: 0.2,
-    release: 1,
+    attack: 0.005,
+    decay: 0.1,
     sustain: 0.3,
+    release: 1,
   },
 });
-type BasicOscillatorType = 'sine' | 'square' | 'sawtooth' | 'triangle';
 
 function App() {
   type Loop = {
@@ -98,7 +103,7 @@ function App() {
   const [currentBeat, setCurrentBeat] = React.useState(0);
   const [currentBPM, setCurrentBPM] = React.useState(120);
   const [oscillator, setOscillator] =
-    React.useState<BasicOscillatorType>('triangle');
+    React.useState<OscillatorType>('triangle');
   const [noteMatrix, setNoteMatrix] = React.useState(defaultNoteMatrix);
   const [currentScale, setCurrentScale] = React.useState(SCALES.major);
   const loop = React.useRef<Loop | null>(null);
@@ -242,9 +247,7 @@ function App() {
       <select
         name="oscillator"
         id="oscillator"
-        onChange={e =>
-          setOscillator(e.currentTarget.value as BasicOscillatorType)
-        }
+        onChange={e => setOscillator(e.currentTarget.value as OscillatorType)}
         defaultValue={oscillator}
       >
         {['sine', 'square', 'triangle', 'sawtooth'].map(type => (
