@@ -18,12 +18,6 @@ export const defaultNoteMatrix = [
 ];
 export const emptyBeat = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-export enum ScaleType {
-  major = 'major',
-  minor = 'minor',
-  suspended = 'suspended',
-}
-
 type ScaleSet = {
   [key: string]: Array<string>;
 };

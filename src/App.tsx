@@ -81,6 +81,14 @@ const GridStyle = styled.div`
 `;
 
 const synth = new Tone.PolySynth().toDestination();
+synth.set({
+  envelope: {
+    decay: 0.2,
+    release: 1,
+    sustain: 0.3,
+  },
+});
+type BasicOscillatorType = 'sine' | 'square' | 'sawtooth' | 'triangle';
 
 function App() {
   type Loop = {
@@ -89,6 +97,8 @@ function App() {
   const [isPlaying, setIsPlaying] = React.useState(false);
   const [currentBeat, setCurrentBeat] = React.useState(0);
   const [currentBPM, setCurrentBPM] = React.useState(120);
+  const [oscillator, setOscillator] =
+    React.useState<BasicOscillatorType>('triangle');
   const [noteMatrix, setNoteMatrix] = React.useState(defaultNoteMatrix);
   const [currentScale, setCurrentScale] = React.useState(SCALES.major);
   const loop = React.useRef<Loop | null>(null);
@@ -102,7 +112,6 @@ function App() {
   );
 
   const playSingleNote = (note = '') => synth.triggerAttackRelease(note, '16n');
-
   const tick = (e: React.MouseEvent<HTMLButtonElement>): void => {
     const currentBeat = parseFloat(e.currentTarget.dataset.beat!);
     const selectedNote = parseFloat(e.currentTarget.dataset.index!);
@@ -141,15 +150,28 @@ function App() {
     Tone.Transport.on('stop', () => setCurrentBeat(0));
   }, []);
   React.useEffect(() => {
+    synth.set({
+      oscillator: {
+        type: oscillator,
+      },
+    });
+  }, [oscillator]);
+  React.useEffect(() => {
     Tone.Transport.bpm.value = currentBPM;
   }, [currentBPM]);
   React.useEffect(() => {
+    const low = -20; // volume when all notes are playing. lower to prevent peaking
+    const high = -10; // volume whan one note is playing
+
     if (loop.current) {
       loop.current.dispose();
     }
     loop.current = new Tone.Sequence(
       (time, beat) => {
         setCurrentBeat(beat);
+        // Adjust the volume per the number of notes
+        const vol = ((16 - noteMap[beat].length) / 16) * (high - low) + low;
+        synth.volume.setValueAtTime(vol, time);
         synth.triggerAttackRelease(noteMap[beat], '16n', time);
       },
       [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
@@ -213,6 +235,21 @@ function App() {
         {[80, 100, 120, 140, 160, 180, 200].map(bpm => (
           <option value={bpm} key={bpm}>
             {bpm}
+          </option>
+        ))}
+      </select>
+      Oscillator
+      <select
+        name="oscillator"
+        id="oscillator"
+        onChange={e =>
+          setOscillator(e.currentTarget.value as BasicOscillatorType)
+        }
+        defaultValue={oscillator}
+      >
+        {['sine', 'square', 'triangle', 'sawtooth'].map(type => (
+          <option value={type} key={type}>
+            {type}
           </option>
         ))}
       </select>
