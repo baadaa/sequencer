@@ -3,6 +3,8 @@
   --base-shadow: 0 1px 10px rgba(0, 0, 0, 0.2);
   --hover-shadow: 3px 7px 15px rgba(0, 0, 0, 0.1),
     -1px 3px 25px rgba(0, 0, 0, 0.1);
+  --inset-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  --base-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
   --cyan900: #0a2129;
   --cyan800: #154251;
   --cyan700: #1f637a;
@@ -53,9 +55,7 @@
   --coolGray200: #C6C8D2;
   --coolGray100: #E3E4E8;
   --coolGray50: #F1F1F4;
-  --inset-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-  --base-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
-  --hover-shadow: 0 2px 15px rgba(0, 0, 0, 0.15);
+
 }
 * {
   transition: opacity 0.2s ease-out, background-color 0.2s ease-out,

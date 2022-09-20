@@ -10,6 +10,7 @@ import Slider from 'react-input-slider';
 
 import { defaultNoteMatrix, emptyBeat, SCALES } from './data';
 import { OscillatorType } from './types/soundTypes';
+import { normalizeVolume } from './utils';
 import {
   IconPlay,
   IconStop,
@@ -21,7 +22,7 @@ import {
 const Wrapper = styled.div`
   padding: 2.4rem 2rem 1.5rem;
   background-color: var(--wrapper-bg);
-  box-shadow: var(--base-shadow);
+  box-shadow: var(--hover-shadow);
   border-radius: 1.2rem;
   display: flex;
   h1 {
@@ -327,9 +328,6 @@ function App() {
     Tone.Transport.bpm.value = currentBPM;
   }, [currentBPM]);
   React.useEffect(() => {
-    const low = -20; // volume when all notes are playing. lower to prevent peaking
-    const high = -10; // volume whan one note is playing
-
     if (loop.current) {
       loop.current.dispose();
     }
@@ -337,9 +335,11 @@ function App() {
       (time, beat) => {
         setCurrentBeat(beat);
         // Adjust the volume per the number of notes
-        const vol =
-          (((16 - noteMap[beat].length) / 16) * (high - low) + low) *
-          (1 - currentVol);
+        const normalized = normalizeVolume({
+          totalNotes: 16,
+          activeNotes: noteMap[beat].length,
+        });
+        const vol = normalized * (1 - currentVol);
         synth.volume.setValueAtTime(vol, time);
         synth.triggerAttackRelease(noteMap[beat], '16n', time);
       },
