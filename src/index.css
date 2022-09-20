@@ -110,6 +110,11 @@ body.light {
   --play-btn: var(--cyan500);
   --trash-btn: var(--red300);
   --title-color: #fff;
+  --input-bg: var(--cyan700);
+  --input-ui: var(--cyan600);
+  --input-active: var(--cyan500);
+  --input-label: var(--cyan200);
+  --input-value: #fff;
 background: linear-gradient(
     106.79deg,
     var(--gradient-cyan-end) 6.17%,

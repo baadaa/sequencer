@@ -6,6 +6,8 @@
 import * as React from 'react';
 import * as Tone from 'tone';
 import styled from 'styled-components';
+import Slider from 'react-input-slider';
+
 import { defaultNoteMatrix, emptyBeat, SCALES } from './data';
 import { OscillatorType } from './types/soundTypes';
 import { IconPlay, IconStop, IconTrash } from './components/Icons';
@@ -28,9 +30,12 @@ const Wrapper = styled.div`
     letter-spacing: 1.345em;
   }
   .primary-ui {
-    margin: 3.5rem 0 0 2rem;
+    margin: 3rem 0 0 2rem;
+    padding: 0.4rem 0;
+    height: 50.5rem;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     button {
       width: 5rem;
       height: 5rem;
@@ -59,7 +64,84 @@ const Wrapper = styled.div`
     }
     .slider-control {
       display: flex;
+    }
+    .slider {
+      display: flex;
+      width: 2.4rem;
+      align-items: center;
       flex-direction: column;
+      font-weight: bold;
+      letter-spacing: 0.05em;
+      .label {
+        color: var(--input-label);
+        font-size: 1rem;
+        margin-top: 1rem;
+      }
+      .value {
+        font-size: 1.2rem;
+        color: var(--input-value);
+      }
+    }
+    .slider + .slider {
+      margin-left: 1rem;
+    }
+  }
+  .secondary-ui {
+    display: flex;
+    align-items: center;
+    .select-wrap {
+      width: 10rem;
+      position: relative;
+      background-color: var(--input-bg);
+      border: 1px solid var(--input-ui);
+      margin-right: 1.5rem;
+      &::after,
+      &::before {
+        content: '';
+        position: absolute;
+        pointer-events: none;
+      }
+      &::after {
+        top: 50%;
+        right: 0.5rem;
+        width: 0;
+        height: 0;
+        margin-top: -2px;
+        border-top: 0.5rem solid #fff;
+        border-right: 0.4rem solid transparent;
+        border-left: 0.4rem solid transparent;
+      }
+      &::before {
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 2rem;
+        background-color: var(--input-ui);
+      }
+    }
+    label,
+    select {
+      letter-spacing: 0.05em;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+    label {
+      text-transform: uppercase;
+      color: var(--input-label);
+      margin: 0 0.4rem;
+    }
+    select {
+      cursor: pointer;
+      text-transform: capitalize;
+      color: var(--input-value);
+      background-color: transparent;
+      padding: 0.4rem;
+      position: relative;
+      border: none;
+      outline: none;
+      width: 100%;
+      margin-right: 1.5rem;
+      appearance: none;
     }
   }
 `;
@@ -68,7 +150,7 @@ const GridStyle = styled.div`
   border-radius: 0.8rem;
   width: 52.7rem;
   background-color: #fff;
-  height: 50rem;
+  height: 50.5rem;
   display: flex;
   padding: 1.5rem;
   margin-bottom: 1rem;
@@ -137,8 +219,8 @@ function App() {
   const [isPlaying, setIsPlaying] = React.useState(false);
   const [currentBeat, setCurrentBeat] = React.useState(0);
   const [currentBPM, setCurrentBPM] = React.useState(120);
-  const [oscillator, setOscillator] =
-    React.useState<OscillatorType>('triangle');
+  const [currentVol, setCurrentVol] = React.useState(0);
+  const [oscillator, setOscillator] = React.useState<OscillatorType>('sine');
   const [noteMatrix, setNoteMatrix] = React.useState(defaultNoteMatrix);
   const [currentScale, setCurrentScale] = React.useState(SCALES.major);
   const loop = React.useRef<Loop | null>(null);
@@ -210,7 +292,9 @@ function App() {
       (time, beat) => {
         setCurrentBeat(beat);
         // Adjust the volume per the number of notes
-        const vol = ((16 - noteMap[beat].length) / 16) * (high - low) + low;
+        const vol =
+          (((16 - noteMap[beat].length) / 16) * (high - low) + low) *
+          (1 - currentVol);
         synth.volume.setValueAtTime(vol, time);
         synth.triggerAttackRelease(noteMap[beat], '16n', time);
       },
@@ -256,47 +340,38 @@ function App() {
           ))}
         </GridStyle>
         <div className="secondary-ui">
-          Scale
-          <select
-            name="scale"
-            id="scale"
-            defaultValue="major"
-            onChange={e => setCurrentScale(SCALES[e.currentTarget.value])}
-          >
-            {['major', 'minor', 'suspended'].map(scale => (
-              <option value={scale} key={scale}>
-                {scale}
-              </option>
-            ))}
-          </select>
-          BPM
-          <select
-            name="bpm"
-            id="bpm"
-            onChange={e => setCurrentBPM(parseFloat(e.currentTarget.value))}
-            defaultValue={currentBPM}
-          >
-            {[80, 100, 120, 140, 160, 180, 200].map(bpm => (
-              <option value={bpm} key={bpm}>
-                {bpm}
-              </option>
-            ))}
-          </select>
-          Oscillator
-          <select
-            name="oscillator"
-            id="oscillator"
-            onChange={e =>
-              setOscillator(e.currentTarget.value as OscillatorType)
-            }
-            defaultValue={oscillator}
-          >
-            {['sine', 'square', 'triangle', 'sawtooth'].map(type => (
-              <option value={type} key={type}>
-                {type}
-              </option>
-            ))}
-          </select>
+          <label htmlFor="scale">Scale</label>
+          <div className="select-wrap">
+            <select
+              name="scale"
+              id="scale"
+              defaultValue="major"
+              onChange={e => setCurrentScale(SCALES[e.currentTarget.value])}
+            >
+              {['major', 'minor', 'suspended'].map(scale => (
+                <option value={scale} key={scale}>
+                  {scale}
+                </option>
+              ))}
+            </select>
+          </div>
+          <label htmlFor="oscillator">Waveform</label>
+          <div className="select-wrap">
+            <select
+              name="oscillator"
+              id="oscillator"
+              onChange={e =>
+                setOscillator(e.currentTarget.value as OscillatorType)
+              }
+              defaultValue={oscillator}
+            >
+              {['sine', 'square', 'triangle', 'sawtooth'].map(type => (
+                <option value={type} key={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
       <div className="primary-ui">
@@ -309,24 +384,50 @@ function App() {
           </button>
         </div>
         <div className="slider-control">
-          <input
-            className="input-range"
-            type="range"
-            step={20}
-            value={currentBPM}
-            onChange={e => setCurrentBPM(parseFloat(e.currentTarget.value))}
-            min={80}
-            max={200}
-          />
-          <input
-            className="input-range"
-            type="range"
-            step={20}
-            value={currentBPM}
-            onChange={e => setCurrentBPM(parseFloat(e.currentTarget.value))}
-            min={80}
-            max={200}
-          />
+          <div className="slider">
+            <Slider
+              axis="y"
+              ystep={0.1}
+              ymin={-1}
+              ymax={0.5}
+              y={currentVol}
+              yreverse
+              onChange={({ y }) => setCurrentVol(y)}
+              styles={{
+                track: {
+                  backgroundColor: 'var(--input-bg)',
+                  height: 100,
+                },
+                active: {
+                  backgroundColor: 'var(--input-active)',
+                },
+              }}
+            />
+            <span className="label">VOL</span>
+            <span className="value">{Math.round(currentVol * 10) + 11}</span>
+          </div>
+          <div className="slider">
+            <Slider
+              axis="y"
+              ystep={10}
+              ymin={80}
+              ymax={160}
+              y={currentBPM}
+              yreverse
+              onChange={({ y }) => setCurrentBPM(y)}
+              styles={{
+                track: {
+                  backgroundColor: 'var(--input-bg)',
+                  height: 100,
+                },
+                active: {
+                  backgroundColor: 'var(--input-active)',
+                },
+              }}
+            />
+            <span className="label">BPM</span>
+            <span className="value">{currentBPM}</span>
+          </div>
         </div>
       </div>
     </Wrapper>
