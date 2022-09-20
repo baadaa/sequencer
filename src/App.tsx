@@ -8,32 +8,70 @@ import * as Tone from 'tone';
 import styled from 'styled-components';
 import { defaultNoteMatrix, emptyBeat, SCALES } from './data';
 import { OscillatorType } from './types/soundTypes';
+import { IconPlay, IconStop, IconTrash } from './components/Icons';
 
 const Wrapper = styled.div`
-  padding: 2rem 1rem 1rem;
-  background-color: #fff;
-  border: 1px solid var(--coolGray100);
+  padding: 2.4rem 2rem 1.5rem;
+  background-color: var(--wrapper-bg);
   box-shadow: var(--base-shadow);
-  border-radius: 1.5rem;
+  border-radius: 1.2rem;
+  display: flex;
   h1 {
-    font-size: 1.3em;
+    font-size: 1.2rem;
     font-weight: 700;
-    line-height: 1;
-    margin: 0 auto 1rem;
+    color: var(--title-color);
+    line-height: 1.4rem;
+    margin: 0 auto 1.6rem;
     display: block;
     text-align: center;
     text-transform: uppercase;
-    letter-spacing: 1.3em;
+    letter-spacing: 1.345em;
+  }
+  .primary-ui {
+    margin: 3.5rem 0 0 2rem;
+    display: flex;
+    flex-direction: column;
+    button {
+      width: 5rem;
+      height: 5rem;
+      border-radius: 5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: none;
+      cursor: pointer;
+      &.playback {
+        background-color: var(--play-btn);
+      }
+      &.trash {
+        background-color: var(--trash-btn);
+      }
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+    button + button {
+      margin-top: 1.3rem;
+    }
+    .play-control {
+      display: flex;
+      flex-direction: column;
+    }
+    .slider-control {
+      display: flex;
+      flex-direction: column;
+    }
   }
 `;
 const GridStyle = styled.div`
-  --gap: 0.7rem;
-  width: 55rem;
+  --gap: 0.5rem;
+  border-radius: 0.8rem;
+  width: 52.7rem;
+  background-color: #fff;
   height: 50rem;
   display: flex;
-  padding: var(--gap) 0;
+  padding: 1.5rem;
   margin-bottom: 1rem;
-  grid-template-columns: repeat(17, 1fr);
   .beat {
     display: flex;
     flex: 1;
@@ -46,12 +84,9 @@ const GridStyle = styled.div`
         }
       }
     }
-    &:nth-of-type(4n + 1) {
-      border-right: 1px solid var(--coolGray50);
-      padding-right: var(--gap);
-    }
-    &:last-of-type {
-      border-right: none;
+    &:first-of-type {
+      flex: 0;
+      margin-right: var(--gap);
     }
   }
 
@@ -190,72 +225,110 @@ function App() {
   }, []);
   return (
     <Wrapper>
-      <h1>Bare-bones sequencer</h1>
-      <GridStyle>
-        <div className="beat">
-          {currentScale.map((note, i) => (
-            <div className="head" key={i}>
-              {note}
-            </div>
-          ))}
-        </div>
-        {noteMatrix.map((beat, i) => (
-          <div className="beat" key={i} data-active={currentBeat === i ? 1 : 0}>
-            {currentScale.map((note, j) => (
-              <button
-                className="note"
-                key={j}
-                onClick={tick}
-                data-note={note}
-                data-on={beat[j]}
-                data-beat={i}
-                data-index={j}
-              />
+      <div className="grid-are">
+        <h1>Pentatonic Sequencer</h1>
+        <GridStyle>
+          <div className="beat">
+            {currentScale.map((note, i) => (
+              <div className="head" key={i}>
+                {note}
+              </div>
             ))}
           </div>
-        ))}
-      </GridStyle>
-      <button onClick={togglePlay}>{isPlaying ? 'Stop' : 'Play'}</button>
-      <button onClick={reset}>Clear</button>
-      Scale
-      <select
-        name="scale"
-        id="scale"
-        defaultValue="major"
-        onChange={e => setCurrentScale(SCALES[e.currentTarget.value])}
-      >
-        {['major', 'minor', 'suspended'].map(scale => (
-          <option value={scale} key={scale}>
-            {scale}
-          </option>
-        ))}
-      </select>
-      BPM
-      <select
-        name="bpm"
-        id="bpm"
-        onChange={e => setCurrentBPM(parseFloat(e.currentTarget.value))}
-        defaultValue={currentBPM}
-      >
-        {[80, 100, 120, 140, 160, 180, 200].map(bpm => (
-          <option value={bpm} key={bpm}>
-            {bpm}
-          </option>
-        ))}
-      </select>
-      Oscillator
-      <select
-        name="oscillator"
-        id="oscillator"
-        onChange={e => setOscillator(e.currentTarget.value as OscillatorType)}
-        defaultValue={oscillator}
-      >
-        {['sine', 'square', 'triangle', 'sawtooth'].map(type => (
-          <option value={type} key={type}>
-            {type}
-          </option>
-        ))}
-      </select>
+          {noteMatrix.map((beat, i) => (
+            <div
+              className="beat"
+              key={i}
+              data-active={isPlaying && currentBeat === i ? 1 : 0}
+            >
+              {currentScale.map((note, j) => (
+                <button
+                  className="note"
+                  key={j}
+                  onClick={tick}
+                  data-note={note}
+                  data-on={beat[j]}
+                  data-beat={i}
+                  data-index={j}
+                />
+              ))}
+            </div>
+          ))}
+        </GridStyle>
+        <div className="secondary-ui">
+          Scale
+          <select
+            name="scale"
+            id="scale"
+            defaultValue="major"
+            onChange={e => setCurrentScale(SCALES[e.currentTarget.value])}
+          >
+            {['major', 'minor', 'suspended'].map(scale => (
+              <option value={scale} key={scale}>
+                {scale}
+              </option>
+            ))}
+          </select>
+          BPM
+          <select
+            name="bpm"
+            id="bpm"
+            onChange={e => setCurrentBPM(parseFloat(e.currentTarget.value))}
+            defaultValue={currentBPM}
+          >
+            {[80, 100, 120, 140, 160, 180, 200].map(bpm => (
+              <option value={bpm} key={bpm}>
+                {bpm}
+              </option>
+            ))}
+          </select>
+          Oscillator
+          <select
+            name="oscillator"
+            id="oscillator"
+            onChange={e =>
+              setOscillator(e.currentTarget.value as OscillatorType)
+            }
+            defaultValue={oscillator}
+          >
+            {['sine', 'square', 'triangle', 'sawtooth'].map(type => (
+              <option value={type} key={type}>
+                {type}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+      <div className="primary-ui">
+        <div className="play-control">
+          <button onClick={togglePlay} className="playback">
+            {isPlaying ? <IconStop /> : <IconPlay />}
+          </button>
+          <button onClick={reset} className="trash">
+            <IconTrash />
+          </button>
+        </div>
+        <div className="slider-control">
+          <input
+            className="input-range"
+            type="range"
+            step={20}
+            value={currentBPM}
+            onChange={e => setCurrentBPM(parseFloat(e.currentTarget.value))}
+            min={80}
+            max={200}
+          />
+          <input
+            className="input-range"
+            type="range"
+            step={20}
+            value={currentBPM}
+            onChange={e => setCurrentBPM(parseFloat(e.currentTarget.value))}
+            min={80}
+            max={200}
+          />
+        </div>
+      </div>
     </Wrapper>
   );
 }

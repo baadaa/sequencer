@@ -87,8 +87,6 @@ body {
   font-feature-settings: 'kern', 'liga', 'clig', 'calt';
   color: var(--coolGray800);
   --text-color: var(--coolGray800);
-  --menu-bg: #fff;
-  --title-color: var(--cyan800);
   --menu-icon: var(--title-color);
   --bg: var(--coolGray50);
   --meter-bg: var(--coolGray100);
@@ -108,8 +106,10 @@ body {
 body.light {
   --gradient-green-end: var(--green500);
   --gradient-cyan-end: var(--cyan500);
-  --logo-letters: var(--coolGray500);
-  --logo-dividers: var(--coolGray100);
+  --wrapper-bg: var(--cyan800);
+  --play-btn: var(--cyan500);
+  --trash-btn: var(--red300);
+  --title-color: #fff;
 background: linear-gradient(
     106.79deg,
     var(--gradient-cyan-end) 6.17%,
@@ -123,11 +123,6 @@ body.dark {
   --title-color: #fff;
   --text-color: var(--coolGray200);
   --menu-bg: var(--cyan800);
-  --meter-bg: var(--coolGray700);
-  --meter-tick: var(--coolGray500);
-  --minute-meter: var(--coolGray500);
-  --second-meter: var(--coolGray500);
-  --clock-bg: var(--coolGray800);
 }
 *,
 * > * {
