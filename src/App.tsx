@@ -10,7 +10,13 @@ import Slider from 'react-input-slider';
 
 import { defaultNoteMatrix, emptyBeat, SCALES } from './data';
 import { OscillatorType } from './types/soundTypes';
-import { IconPlay, IconStop, IconTrash } from './components/Icons';
+import {
+  IconPlay,
+  IconStop,
+  IconTrash,
+  IconSave,
+  IconLoad,
+} from './components/Icons';
 
 const Wrapper = styled.div`
   padding: 2.4rem 2rem 1.5rem;
@@ -89,6 +95,14 @@ const Wrapper = styled.div`
   .secondary-ui {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    .dropdowns {
+      display: flex;
+      align-items: baseline;
+    }
+    .buttons {
+      display: flex;
+    }
     .select-wrap {
       width: 10rem;
       position: relative;
@@ -135,13 +149,44 @@ const Wrapper = styled.div`
       text-transform: capitalize;
       color: var(--input-value);
       background-color: transparent;
-      padding: 0.4rem;
+      padding: 0.6rem;
       position: relative;
       border: none;
       outline: none;
       width: 100%;
       margin-right: 1.5rem;
       appearance: none;
+    }
+    button {
+      background-color: var(--input-ui);
+      color: #fff;
+      font-size: 1.12rem;
+      letter-spacing: 0.05em;
+      border: none;
+      outline: none;
+      font-weight: bold;
+      display: flex;
+      padding: 0.6rem 1.2rem;
+      border-radius: 4rem;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: color 0.2s, transform 0.2s, background-color 0.2s;
+      svg {
+        margin-right: 0.6rem;
+        transition: fill 0.2s;
+      }
+      &:hover {
+        transform: translateY(-1px);
+        background-color: var(--input-accent);
+        color: var(--wrapper-bg);
+        svg path {
+          fill: var(--wrapper-bg);
+        }
+      }
+    }
+    button + button {
+      margin-left: 0.5rem;
     }
   }
 `;
@@ -153,7 +198,7 @@ const GridStyle = styled.div`
   height: 50.5rem;
   display: flex;
   padding: 1.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.3rem;
   .beat {
     display: flex;
     flex: 1;
@@ -340,37 +385,47 @@ function App() {
           ))}
         </GridStyle>
         <div className="secondary-ui">
-          <label htmlFor="scale">Scale</label>
-          <div className="select-wrap">
-            <select
-              name="scale"
-              id="scale"
-              defaultValue="major"
-              onChange={e => setCurrentScale(SCALES[e.currentTarget.value])}
-            >
-              {['major', 'minor', 'suspended'].map(scale => (
-                <option value={scale} key={scale}>
-                  {scale}
-                </option>
-              ))}
-            </select>
+          <div className="dropdowns">
+            <label htmlFor="scale">Scale</label>
+            <div className="select-wrap">
+              <select
+                name="scale"
+                id="scale"
+                defaultValue="major"
+                onChange={e => setCurrentScale(SCALES[e.currentTarget.value])}
+              >
+                {['major', 'minor', 'suspended'].map(scale => (
+                  <option value={scale} key={scale}>
+                    {scale}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <label htmlFor="oscillator">Waveform</label>
+            <div className="select-wrap">
+              <select
+                name="oscillator"
+                id="oscillator"
+                onChange={e =>
+                  setOscillator(e.currentTarget.value as OscillatorType)
+                }
+                defaultValue={oscillator}
+              >
+                {['sine', 'square', 'triangle', 'sawtooth'].map(type => (
+                  <option value={type} key={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-          <label htmlFor="oscillator">Waveform</label>
-          <div className="select-wrap">
-            <select
-              name="oscillator"
-              id="oscillator"
-              onChange={e =>
-                setOscillator(e.currentTarget.value as OscillatorType)
-              }
-              defaultValue={oscillator}
-            >
-              {['sine', 'square', 'triangle', 'sawtooth'].map(type => (
-                <option value={type} key={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
+          <div className="buttons">
+            <button type="button" className="save">
+              <IconSave /> Save
+            </button>
+            <button type="button" className="save">
+              <IconLoad /> Load
+            </button>
           </div>
         </div>
       </div>
