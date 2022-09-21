@@ -18,10 +18,6 @@ import {
   IconTrash,
   IconSave,
   IconLoad,
-  WaveSaw,
-  WaveSine,
-  WaveSquare,
-  WaveTriangle,
 } from './components/Icons';
 
 const Wrapper = styled.div`
@@ -42,6 +38,9 @@ const Wrapper = styled.div`
     text-align: center;
     text-transform: uppercase;
     letter-spacing: 1.345em;
+  }
+  .primary-ui.mobile-play-control {
+    display: none;
   }
   .primary-ui {
     margin: 3rem 0 0 2rem;
@@ -107,6 +106,9 @@ const Wrapper = styled.div`
     .dropdowns {
       display: flex;
       align-items: baseline;
+    }
+    .slider-control {
+      display: none;
     }
     .buttons {
       display: flex;
@@ -197,6 +199,83 @@ const Wrapper = styled.div`
       margin-left: 0.5rem;
     }
   }
+  @media screen and (max-width: 680px) {
+    h1 {
+      max-width: 30rem;
+      text-align: left;
+      margin: 0 0 1rem 1rem;
+    }
+    .primary-ui {
+      display: none;
+    }
+    .primary-ui.mobile-play-control {
+      flex-direction: row;
+      margin: 0 0 1rem;
+      height: auto;
+      display: flex;
+      justify-content: flex-end;
+      button {
+        display: inline-flex;
+        margin: 0;
+        width: 4rem;
+        height: 4rem;
+        svg {
+          transform: scale(0.8);
+        }
+      }
+      button + button {
+        margin-left: 1rem;
+      }
+    }
+
+    .secondary-ui {
+      width: 35rem;
+      align-items: flex-start;
+      .buttons {
+        flex-basis: 17rem;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+      .slider-control {
+        display: block;
+      }
+      .slider {
+        display: flex;
+        height: 2.4rem;
+        align-items: center;
+        justify-content: space-between;
+        font-weight: bold;
+        letter-spacing: 0.05em;
+        .label {
+          color: var(--input-label);
+          font-size: 1rem;
+        }
+        .value {
+          font-size: 1.2rem;
+          margin: 0 1rem 0 0.25rem;
+          color: var(--input-value);
+          white-space: nowrap;
+        }
+      }
+      .slider + .slider {
+        margin-top: 1rem;
+        margin-bottom: 1.5rem;
+      }
+      .dropdowns {
+        flex-wrap: wrap;
+        flex-basis: 17rem;
+        justify-content: flex-end;
+        .select-wrap,
+        .select-wrap select {
+          margin-right: 0;
+        }
+        .select-wrap:first-of-type,
+        label:first-of-type {
+          margin-bottom: 0.7rem;
+        }
+      }
+    }
+  }
 `;
 const GridStyle = styled.div`
   --gap: 0.5rem;
@@ -249,6 +328,15 @@ const GridStyle = styled.div`
   }
   .note + .note {
     margin-top: var(--gap);
+  }
+  @media screen and (max-width: 680px) {
+    --gap: 0.3rem;
+    width: 35rem;
+    height: 35rem;
+    padding: 0.9rem;
+    .beat:first-of-type {
+      display: none;
+    }
   }
 `;
 
@@ -364,8 +452,16 @@ function App() {
     <>
       <WaveForm waveform={oscillator} />
       <Wrapper>
-        <div className="grid-are">
+        <div className="grid-area">
           <h1>Pentatonic Sequencer</h1>
+          <div className="primary-ui mobile-play-control">
+            <button onClick={togglePlay} className="playback">
+              {isPlaying ? <IconStop /> : <IconPlay />}
+            </button>
+            <button onClick={reset} className="trash">
+              <IconTrash />
+            </button>
+          </div>
           <GridStyle>
             <div className="beat">
               {currentScale.map((note, i) => (
@@ -430,6 +526,64 @@ function App() {
               </div>
             </div>
             <div className="buttons">
+              <div className="slider-control">
+                <div className="slider">
+                  <span className="label">
+                    VOL
+                    <span className="value">
+                      {Math.round(currentVol * 10) + 11}
+                    </span>
+                  </span>
+                  <Slider
+                    axis="x"
+                    xstep={0.1}
+                    xmin={-1}
+                    xmax={0.5}
+                    x={currentVol}
+                    onChange={({ x }) => setCurrentVol(x)}
+                    styles={{
+                      track: {
+                        backgroundColor: 'var(--input-bg)',
+                        width: `10rem`,
+                        height: 10,
+                      },
+                      active: {
+                        backgroundColor: 'var(--input-active)',
+                      },
+                    }}
+                  />
+                </div>
+                <div className="slider">
+                  <span className="label">
+                    BPM
+                    <span className="value">
+                      {currentBPM}
+                      <span style={{ opacity: 0 }}>
+                        {currentBPM < 100 ? '.' : null}
+                      </span>
+                    </span>
+                  </span>
+                  <Slider
+                    axis="x"
+                    xstep={10}
+                    xmin={80}
+                    xmax={160}
+                    x={currentBPM}
+                    onChange={({ x }) => setCurrentBPM(x)}
+                    styles={{
+                      track: {
+                        backgroundColor: 'var(--input-bg)',
+                        width: `10rem`,
+                        height: 10,
+                      },
+                      active: {
+                        backgroundColor: 'var(--input-active)',
+                      },
+                    }}
+                  />
+                </div>
+              </div>
+
               <button type="button" className="save">
                 <IconSave /> Save
               </button>
