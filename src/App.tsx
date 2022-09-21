@@ -340,6 +340,7 @@ function App() {
           activeNotes: noteMap[beat].length,
         });
         const vol = normalized * (1 - currentVol);
+        console.log(vol, currentVol);
         synth.volume.setValueAtTime(vol, time);
         synth.triggerAttackRelease(noteMap[beat], '16n', time);
       },
