@@ -11,15 +11,22 @@ import Slider from 'react-input-slider';
 import { defaultNoteMatrix, emptyBeat, SCALES } from './data';
 import { OscillatorType } from './types/soundTypes';
 import { normalizeVolume } from './utils';
+import WaveForm from './components/WaveForm';
 import {
   IconPlay,
   IconStop,
   IconTrash,
   IconSave,
   IconLoad,
+  WaveSaw,
+  WaveSine,
+  WaveSquare,
+  WaveTriangle,
 } from './components/Icons';
 
 const Wrapper = styled.div`
+  position: relative;
+  z-index: 2;
   padding: 2.4rem 2rem 1.5rem;
   background-color: var(--wrapper-bg);
   box-shadow: var(--hover-shadow);
@@ -354,139 +361,142 @@ function App() {
     setIsPlaying(isPlaying => !isPlaying);
   }, []);
   return (
-    <Wrapper>
-      <div className="grid-are">
-        <h1>Pentatonic Sequencer</h1>
-        <GridStyle>
-          <div className="beat">
-            {currentScale.map((note, i) => (
-              <div className="head" key={i}>
-                {note}
-              </div>
-            ))}
-          </div>
-          {noteMatrix.map((beat, i) => (
-            <div
-              className="beat"
-              key={i}
-              data-active={isPlaying && currentBeat === i ? 1 : 0}
-            >
-              {currentScale.map((note, j) => (
-                <button
-                  className="note"
-                  key={j}
-                  onClick={tick}
-                  data-note={note}
-                  data-on={beat[j]}
-                  data-beat={i}
-                  data-index={j}
-                />
+    <>
+      <WaveForm waveform={oscillator} />
+      <Wrapper>
+        <div className="grid-are">
+          <h1>Pentatonic Sequencer</h1>
+          <GridStyle>
+            <div className="beat">
+              {currentScale.map((note, i) => (
+                <div className="head" key={i}>
+                  {note}
+                </div>
               ))}
             </div>
-          ))}
-        </GridStyle>
-        <div className="secondary-ui">
-          <div className="dropdowns">
-            <label htmlFor="scale">Scale</label>
-            <div className="select-wrap">
-              <select
-                name="scale"
-                id="scale"
-                defaultValue="major"
-                onChange={e => setCurrentScale(SCALES[e.currentTarget.value])}
+            {noteMatrix.map((beat, i) => (
+              <div
+                className="beat"
+                key={i}
+                data-active={isPlaying && currentBeat === i ? 1 : 0}
               >
-                {['major', 'minor', 'suspended'].map(scale => (
-                  <option value={scale} key={scale}>
-                    {scale}
-                  </option>
+                {currentScale.map((note, j) => (
+                  <button
+                    className="note"
+                    key={j}
+                    onClick={tick}
+                    data-note={note}
+                    data-on={beat[j]}
+                    data-beat={i}
+                    data-index={j}
+                  />
                 ))}
-              </select>
+              </div>
+            ))}
+          </GridStyle>
+          <div className="secondary-ui">
+            <div className="dropdowns">
+              <label htmlFor="scale">Scale</label>
+              <div className="select-wrap">
+                <select
+                  name="scale"
+                  id="scale"
+                  defaultValue="major"
+                  onChange={e => setCurrentScale(SCALES[e.currentTarget.value])}
+                >
+                  {['major', 'minor', 'suspended'].map(scale => (
+                    <option value={scale} key={scale}>
+                      {scale}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <label htmlFor="oscillator">Waveform</label>
+              <div className="select-wrap">
+                <select
+                  name="oscillator"
+                  id="oscillator"
+                  onChange={e =>
+                    setOscillator(e.currentTarget.value as OscillatorType)
+                  }
+                  defaultValue={oscillator}
+                >
+                  {['sine', 'square', 'triangle', 'sawtooth'].map(type => (
+                    <option value={type} key={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-            <label htmlFor="oscillator">Waveform</label>
-            <div className="select-wrap">
-              <select
-                name="oscillator"
-                id="oscillator"
-                onChange={e =>
-                  setOscillator(e.currentTarget.value as OscillatorType)
-                }
-                defaultValue={oscillator}
-              >
-                {['sine', 'square', 'triangle', 'sawtooth'].map(type => (
-                  <option value={type} key={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
+            <div className="buttons">
+              <button type="button" className="save">
+                <IconSave /> Save
+              </button>
+              <button type="button" className="save">
+                <IconLoad /> Load
+              </button>
             </div>
           </div>
-          <div className="buttons">
-            <button type="button" className="save">
-              <IconSave /> Save
+        </div>
+        <div className="primary-ui">
+          <div className="play-control">
+            <button onClick={togglePlay} className="playback">
+              {isPlaying ? <IconStop /> : <IconPlay />}
             </button>
-            <button type="button" className="save">
-              <IconLoad /> Load
+            <button onClick={reset} className="trash">
+              <IconTrash />
             </button>
           </div>
-        </div>
-      </div>
-      <div className="primary-ui">
-        <div className="play-control">
-          <button onClick={togglePlay} className="playback">
-            {isPlaying ? <IconStop /> : <IconPlay />}
-          </button>
-          <button onClick={reset} className="trash">
-            <IconTrash />
-          </button>
-        </div>
-        <div className="slider-control">
-          <div className="slider">
-            <Slider
-              axis="y"
-              ystep={0.1}
-              ymin={-1}
-              ymax={0.5}
-              y={currentVol}
-              yreverse
-              onChange={({ y }) => setCurrentVol(y)}
-              styles={{
-                track: {
-                  backgroundColor: 'var(--input-bg)',
-                  height: 100,
-                },
-                active: {
-                  backgroundColor: 'var(--input-active)',
-                },
-              }}
-            />
-            <span className="label">VOL</span>
-            <span className="value">{Math.round(currentVol * 10) + 11}</span>
-          </div>
-          <div className="slider">
-            <Slider
-              axis="y"
-              ystep={10}
-              ymin={80}
-              ymax={160}
-              y={currentBPM}
-              yreverse
-              onChange={({ y }) => setCurrentBPM(y)}
-              styles={{
-                track: {
-                  backgroundColor: 'var(--input-bg)',
-                  height: 100,
-                },
-                active: {
-                  backgroundColor: 'var(--input-active)',
-                },
-              }}
-            />
-            <span className="label">BPM</span>
-            <span className="value">{currentBPM}</span>
+          <div className="slider-control">
+            <div className="slider">
+              <Slider
+                axis="y"
+                ystep={0.1}
+                ymin={-1}
+                ymax={0.5}
+                y={currentVol}
+                yreverse
+                onChange={({ y }) => setCurrentVol(y)}
+                styles={{
+                  track: {
+                    backgroundColor: 'var(--input-bg)',
+                    height: 100,
+                  },
+                  active: {
+                    backgroundColor: 'var(--input-active)',
+                  },
+                }}
+              />
+              <span className="label">VOL</span>
+              <span className="value">{Math.round(currentVol * 10) + 11}</span>
+            </div>
+            <div className="slider">
+              <Slider
+                axis="y"
+                ystep={10}
+                ymin={80}
+                ymax={160}
+                y={currentBPM}
+                yreverse
+                onChange={({ y }) => setCurrentBPM(y)}
+                styles={{
+                  track: {
+                    backgroundColor: 'var(--input-bg)',
+                    height: 100,
+                  },
+                  active: {
+                    backgroundColor: 'var(--input-active)',
+                  },
+                }}
+              />
+              <span className="label">BPM</span>
+              <span className="value">{currentBPM}</span>
+            </div>
           </div>
         </div>
-      </div>
-    </Wrapper>
+      </Wrapper>
+    </>
   );
 }
 

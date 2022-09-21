@@ -4,4 +4,8 @@ export * from './IconSave';
 export * from './IconLoad';
 export * from './IconTrash';
 export * from './IconClose';
+export * from './WaveSine';
+export * from './WaveSaw';
+export * from './WaveSquare';
+export * from './WaveTriangle';
 export * from './ForkMe';
