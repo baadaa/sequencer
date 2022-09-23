@@ -4,7 +4,6 @@
   --hover-shadow: 3px 7px 15px rgba(0, 0, 0, 0.1),
     -1px 3px 25px rgba(0, 0, 0, 0.1);
   --inset-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-  --base-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
   --cyan900: #0a2129;
   --cyan800: #154251;
   --cyan700: #1f637a;
@@ -89,11 +88,6 @@ body {
   --text-color: var(--coolGray800);
   --menu-icon: var(--title-color);
   --bg: var(--coolGray50);
-  --meter-bg: var(--coolGray100);
-  --meter-tick: var(--coolGray200);
-  --minute-meter: var(--coolGray300);
-  --second-meter: var(--coolGray200);
-  --clock-bg: #fff;
   background-color: var(--bg);
   margin: 0;
   padding: 0;
@@ -117,11 +111,15 @@ body.light {
   --input-label: var(--cyan200);
   --input-accent: var(--yellow500);
   --input-value: #fff;
-background: linear-gradient(
+  background: linear-gradient(
     106.79deg,
     var(--gradient-cyan-end) 6.17%,
     var(--gradient-green-end) 94.78%
   );
+  --modal-bg: rgba(10, 33, 41, 0.8);
+  --modal-dialogue: var(--coolGray200);
+  --modal-text: var(--coolGray700);
+  --modal-border: var(--coolGray300);
 }
 body.dark {
   --bg: var(--coolGray900);

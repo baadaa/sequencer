@@ -1,357 +1,22 @@
-// https://www.maxlaumeister.com/tonematrix/ for functionality, filter and synth options
-// https://codesandbox.io/s/sequencer-demo-wjgg4?file=/src/Sequencer.js for sequencing reference with Tone.Sequencer
-// https://medium.com/geekculture/creating-a-step-sequencer-with-tone-js-32ea3002aaf5#d7bc for sequencing reference with Tone.Transport.scheduleRepeat (mono synth)
-// https://www.devbridge.com/articles/tonejs-coding-music-production-guide/ for production sample
-
 import * as React from 'react';
 import * as Tone from 'tone';
-import styled from 'styled-components';
-import Slider from 'react-input-slider';
 
+import ScaleGrid from './components/ScaleGrid';
+import {
+  Wrapper,
+  PlaybackButtons,
+  SliderControls,
+  Dropdowns,
+} from './components/InterfaceElements';
+
+import { synth, playSingleNote } from './components/ToneSettings';
 import { defaultNoteMatrix, emptyBeat, SCALES } from './data';
 import { OscillatorType } from './types/soundTypes';
 import { normalizeVolume } from './utils';
 import WaveForm from './components/WaveForm';
-import {
-  IconPlay,
-  IconStop,
-  IconTrash,
-  IconSave,
-  IconLoad,
-} from './components/Icons';
+import { IconSave, IconLoad } from './components/Icons';
 
-const Wrapper = styled.div`
-  position: relative;
-  z-index: 2;
-  padding: 2.4rem 2rem 1.5rem;
-  background-color: var(--wrapper-bg);
-  box-shadow: var(--hover-shadow);
-  border-radius: 1.2rem;
-  display: flex;
-  h1 {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--title-color);
-    line-height: 1.4rem;
-    margin: 0 auto 1.6rem;
-    display: block;
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 1.345em;
-  }
-  .primary-ui.mobile-play-control {
-    display: none;
-  }
-  .primary-ui {
-    margin: 3rem 0 0 2rem;
-    padding: 0.4rem 0;
-    height: 50.5rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    button {
-      width: 5rem;
-      height: 5rem;
-      border-radius: 5rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border: none;
-      cursor: pointer;
-      &.playback {
-        background-color: var(--play-btn);
-      }
-      &.trash {
-        background-color: var(--trash-btn);
-      }
-      &:hover {
-        transform: scale(1.05);
-      }
-    }
-    button + button {
-      margin-top: 1.3rem;
-    }
-    .play-control {
-      display: flex;
-      flex-direction: column;
-    }
-    .slider-control {
-      display: flex;
-    }
-    .slider {
-      display: flex;
-      width: 2.4rem;
-      align-items: center;
-      flex-direction: column;
-      font-weight: bold;
-      letter-spacing: 0.05em;
-      .label {
-        color: var(--input-label);
-        font-size: 1rem;
-        margin-top: 1rem;
-      }
-      .value {
-        font-size: 1.2rem;
-        color: var(--input-value);
-      }
-    }
-    .slider + .slider {
-      margin-left: 1rem;
-    }
-  }
-  .secondary-ui {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    .dropdowns {
-      display: flex;
-      align-items: baseline;
-    }
-    .slider-control {
-      display: none;
-    }
-    .buttons {
-      display: flex;
-    }
-    .select-wrap {
-      width: 10rem;
-      position: relative;
-      background-color: var(--input-bg);
-      border: 1px solid var(--input-ui);
-      margin-right: 1.5rem;
-      &::after,
-      &::before {
-        content: '';
-        position: absolute;
-        pointer-events: none;
-      }
-      &::after {
-        top: 50%;
-        right: 0.5rem;
-        width: 0;
-        height: 0;
-        margin-top: -2px;
-        border-top: 0.5rem solid #fff;
-        border-right: 0.4rem solid transparent;
-        border-left: 0.4rem solid transparent;
-      }
-      &::before {
-        right: 0;
-        top: 0;
-        bottom: 0;
-        width: 2rem;
-        background-color: var(--input-ui);
-      }
-    }
-    label,
-    select {
-      letter-spacing: 0.05em;
-      font-weight: bold;
-      font-size: 1rem;
-    }
-    label {
-      text-transform: uppercase;
-      color: var(--input-label);
-      margin: 0 0.4rem;
-    }
-    select {
-      cursor: pointer;
-      text-transform: capitalize;
-      color: var(--input-value);
-      background-color: transparent;
-      padding: 0.6rem;
-      position: relative;
-      border: none;
-      outline: none;
-      width: 100%;
-      margin-right: 1.5rem;
-      appearance: none;
-    }
-    button {
-      background-color: var(--input-ui);
-      color: #fff;
-      font-size: 1.12rem;
-      letter-spacing: 0.05em;
-      border: none;
-      outline: none;
-      font-weight: bold;
-      display: flex;
-      padding: 0.6rem 1.2rem;
-      border-radius: 4rem;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      transition: color 0.2s, transform 0.2s, background-color 0.2s;
-      svg {
-        margin-right: 0.6rem;
-        transition: fill 0.2s;
-      }
-      &:hover {
-        transform: translateY(-1px);
-        background-color: var(--input-accent);
-        color: var(--wrapper-bg);
-        svg path {
-          fill: var(--wrapper-bg);
-        }
-      }
-    }
-    button + button {
-      margin-left: 0.5rem;
-    }
-  }
-  @media screen and (max-width: 680px) {
-    h1 {
-      max-width: 30rem;
-      text-align: left;
-      margin: 0 0 1rem 1rem;
-    }
-    .primary-ui {
-      display: none;
-    }
-    .primary-ui.mobile-play-control {
-      flex-direction: row;
-      margin: 0 0 1rem;
-      height: auto;
-      display: flex;
-      justify-content: flex-end;
-      button {
-        display: inline-flex;
-        margin: 0;
-        width: 4rem;
-        height: 4rem;
-        svg {
-          transform: scale(0.8);
-        }
-      }
-      button + button {
-        margin-left: 1rem;
-      }
-    }
-
-    .secondary-ui {
-      width: 35rem;
-      align-items: flex-start;
-      .buttons {
-        flex-basis: 17rem;
-        flex-wrap: wrap;
-        justify-content: flex-end;
-      }
-      .slider-control {
-        display: block;
-      }
-      .slider {
-        display: flex;
-        height: 2.4rem;
-        align-items: center;
-        justify-content: space-between;
-        font-weight: bold;
-        letter-spacing: 0.05em;
-        .label {
-          color: var(--input-label);
-          font-size: 1rem;
-        }
-        .value {
-          font-size: 1.2rem;
-          margin: 0 1rem 0 0.25rem;
-          color: var(--input-value);
-          white-space: nowrap;
-        }
-      }
-      .slider + .slider {
-        margin-top: 1rem;
-        margin-bottom: 1.5rem;
-      }
-      .dropdowns {
-        flex-wrap: wrap;
-        flex-basis: 17rem;
-        justify-content: flex-end;
-        .select-wrap,
-        .select-wrap select {
-          margin-right: 0;
-        }
-        .select-wrap:first-of-type,
-        label:first-of-type {
-          margin-bottom: 0.7rem;
-        }
-      }
-    }
-  }
-`;
-const GridStyle = styled.div`
-  --gap: 0.5rem;
-  border-radius: 0.8rem;
-  width: 52.7rem;
-  background-color: #fff;
-  height: 50.5rem;
-  display: flex;
-  padding: 1.5rem;
-  margin-bottom: 1.3rem;
-  .beat {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    &[data-active='1'] {
-      .note {
-        background: var(--cyan200);
-        &[data-on='1'] {
-          background: var(--cyan600);
-        }
-      }
-    }
-    &:first-of-type {
-      flex: 0;
-      margin-right: var(--gap);
-    }
-  }
-
-  .beat + .beat {
-    margin-left: var(--gap);
-  }
-  .head,
-  .note {
-    padding: 0;
-    flex: 1;
-    margin: 0;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    background: var(--cyan100);
-    &[data-on='1'] {
-      background: var(--cyan500);
-    }
-  }
-  .head {
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .note + .note {
-    margin-top: var(--gap);
-  }
-  @media screen and (max-width: 680px) {
-    --gap: 0.3rem;
-    width: 35rem;
-    height: 35rem;
-    padding: 0.9rem;
-    .beat:first-of-type {
-      display: none;
-    }
-  }
-`;
-
-const filter = new Tone.Filter({
-  frequency: 1100,
-  rolloff: -12,
-}).toDestination();
-const synth = new Tone.PolySynth().connect(filter).set({
-  envelope: {
-    attack: 0.005,
-    decay: 0.1,
-    sustain: 0.3,
-    release: 1,
-  },
-});
+import Modal from './components/Modals';
 
 function App() {
   type Loop = {
@@ -364,6 +29,8 @@ function App() {
   const [oscillator, setOscillator] = React.useState<OscillatorType>('sine');
   const [noteMatrix, setNoteMatrix] = React.useState(defaultNoteMatrix);
   const [currentScale, setCurrentScale] = React.useState(SCALES.major);
+  const [modalIsOpen, setModalIsOpen] = React.useState(false);
+  const [modalAction, setModalAction] = React.useState('save');
   const loop = React.useRef<Loop | null>(null);
   const noteMap = noteMatrix.map(beat =>
     beat
@@ -374,7 +41,6 @@ function App() {
       .map(item => item.note)
   );
 
-  const playSingleNote = (note = '') => synth.triggerAttackRelease(note, '16n');
   const tick = (e: React.MouseEvent<HTMLButtonElement>): void => {
     const currentBeat = parseFloat(e.currentTarget.dataset.beat!);
     const selectedNote = parseFloat(e.currentTarget.dataset.index!);
@@ -408,6 +74,10 @@ function App() {
     Tone.Transport.stop();
   }, []);
 
+  const openModal = (target = '') => {
+    setModalAction(target);
+    setModalIsOpen(true);
+  };
   React.useEffect(() => {
     Tone.Transport.loop = false;
     Tone.Transport.on('stop', () => setCurrentBeat(0));
@@ -442,7 +112,7 @@ function App() {
       [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
       '16n'
     ).start(0);
-  }, [noteMap, isPlaying]);
+  }, [noteMap, isPlaying, currentVol]);
   const togglePlay = React.useCallback(() => {
     Tone.context.resume();
     Tone.Transport.toggle();
@@ -454,202 +124,66 @@ function App() {
       <Wrapper>
         <div className="grid-area">
           <h1>Pentatonic Sequencer</h1>
-          <div className="primary-ui mobile-play-control">
-            <button onClick={togglePlay} className="playback">
-              {isPlaying ? <IconStop /> : <IconPlay />}
-            </button>
-            <button onClick={reset} className="trash">
-              <IconTrash />
-            </button>
-          </div>
-          <GridStyle>
-            <div className="beat">
-              {currentScale.map((note, i) => (
-                <div className="head" key={i}>
-                  {note}
-                </div>
-              ))}
-            </div>
-            {noteMatrix.map((beat, i) => (
-              <div
-                className="beat"
-                key={i}
-                data-active={isPlaying && currentBeat === i ? 1 : 0}
-              >
-                {currentScale.map((note, j) => (
-                  <button
-                    className="note"
-                    key={j}
-                    onClick={tick}
-                    data-note={note}
-                    data-on={beat[j]}
-                    data-beat={i}
-                    data-index={j}
-                  />
-                ))}
-              </div>
-            ))}
-          </GridStyle>
+          <PlaybackButtons
+            isMobile
+            isPlaying={isPlaying}
+            reset={reset}
+            togglePlay={togglePlay}
+          />
+          <ScaleGrid
+            tick={tick}
+            scale={currentScale}
+            isPlaying={isPlaying}
+            noteMatrix={noteMatrix}
+            currentBeat={currentBeat}
+          />
           <div className="secondary-ui">
-            <div className="dropdowns">
-              <label htmlFor="scale">Scale</label>
-              <div className="select-wrap">
-                <select
-                  name="scale"
-                  id="scale"
-                  defaultValue="major"
-                  onChange={e => setCurrentScale(SCALES[e.currentTarget.value])}
-                >
-                  {['major', 'minor', 'suspended'].map(scale => (
-                    <option value={scale} key={scale}>
-                      {scale}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <label htmlFor="oscillator">Waveform</label>
-              <div className="select-wrap">
-                <select
-                  name="oscillator"
-                  id="oscillator"
-                  onChange={e =>
-                    setOscillator(e.currentTarget.value as OscillatorType)
-                  }
-                  defaultValue={oscillator}
-                >
-                  {['sine', 'square', 'triangle', 'sawtooth'].map(type => (
-                    <option value={type} key={type}>
-                      {type}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
+            <Dropdowns
+              oscillator={oscillator}
+              setOscillator={setOscillator}
+              setCurrentScale={setCurrentScale}
+            />
             <div className="buttons">
-              <div className="slider-control">
-                <div className="slider">
-                  <span className="label">
-                    VOL
-                    <span className="value">
-                      {Math.round(currentVol * 10) + 11}
-                    </span>
-                  </span>
-                  <Slider
-                    axis="x"
-                    xstep={0.1}
-                    xmin={-1}
-                    xmax={0.5}
-                    x={currentVol}
-                    onChange={({ x }) => setCurrentVol(x)}
-                    styles={{
-                      track: {
-                        backgroundColor: 'var(--input-bg)',
-                        width: `10rem`,
-                        height: 10,
-                      },
-                      active: {
-                        backgroundColor: 'var(--input-active)',
-                      },
-                    }}
-                  />
-                </div>
-                <div className="slider">
-                  <span className="label">
-                    BPM
-                    <span className="value">
-                      {currentBPM}
-                      <span style={{ opacity: 0 }}>
-                        {currentBPM < 100 ? '.' : null}
-                      </span>
-                    </span>
-                  </span>
-                  <Slider
-                    axis="x"
-                    xstep={10}
-                    xmin={80}
-                    xmax={160}
-                    x={currentBPM}
-                    onChange={({ x }) => setCurrentBPM(x)}
-                    styles={{
-                      track: {
-                        backgroundColor: 'var(--input-bg)',
-                        width: `10rem`,
-                        height: 10,
-                      },
-                      active: {
-                        backgroundColor: 'var(--input-active)',
-                      },
-                    }}
-                  />
-                </div>
-              </div>
-
-              <button type="button" className="save">
+              <SliderControls
+                isMobile
+                currentBPM={currentBPM}
+                currentVol={currentVol}
+                setCurrentVol={setCurrentVol}
+                setCurrentBPM={setCurrentBPM}
+              />
+              <button
+                type="button"
+                data-action="save"
+                onClick={() => openModal('save')}
+              >
                 <IconSave /> Save
               </button>
-              <button type="button" className="save">
+              <button type="button" data-action="load">
                 <IconLoad /> Load
               </button>
             </div>
           </div>
         </div>
         <div className="primary-ui">
-          <div className="play-control">
-            <button onClick={togglePlay} className="playback">
-              {isPlaying ? <IconStop /> : <IconPlay />}
-            </button>
-            <button onClick={reset} className="trash">
-              <IconTrash />
-            </button>
-          </div>
-          <div className="slider-control">
-            <div className="slider">
-              <Slider
-                axis="y"
-                ystep={0.1}
-                ymin={-1}
-                ymax={0.5}
-                y={currentVol}
-                yreverse
-                onChange={({ y }) => setCurrentVol(y)}
-                styles={{
-                  track: {
-                    backgroundColor: 'var(--input-bg)',
-                    height: 100,
-                  },
-                  active: {
-                    backgroundColor: 'var(--input-active)',
-                  },
-                }}
-              />
-              <span className="label">VOL</span>
-              <span className="value">{Math.round(currentVol * 10) + 11}</span>
-            </div>
-            <div className="slider">
-              <Slider
-                axis="y"
-                ystep={10}
-                ymin={80}
-                ymax={160}
-                y={currentBPM}
-                yreverse
-                onChange={({ y }) => setCurrentBPM(y)}
-                styles={{
-                  track: {
-                    backgroundColor: 'var(--input-bg)',
-                    height: 100,
-                  },
-                  active: {
-                    backgroundColor: 'var(--input-active)',
-                  },
-                }}
-              />
-              <span className="label">BPM</span>
-              <span className="value">{currentBPM}</span>
-            </div>
-          </div>
+          <PlaybackButtons
+            isPlaying={isPlaying}
+            reset={reset}
+            togglePlay={togglePlay}
+          />
+          <SliderControls
+            currentBPM={currentBPM}
+            currentVol={currentVol}
+            setCurrentVol={setCurrentVol}
+            setCurrentBPM={setCurrentBPM}
+          />
         </div>
       </Wrapper>
+      <Modal
+        isOpen={modalIsOpen}
+        action={modalAction}
+        close={() => setModalIsOpen(false)}
+        noteMatrix={noteMatrix}
+      />
     </>
   );
 }
