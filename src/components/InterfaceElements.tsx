@@ -380,13 +380,13 @@ const SliderControls: React.FC<SliderProps> = ({
 
 type DropdownProps = {
   oscillator: OscillatorType;
-  scale: Array<string>;
+  scaleName: string;
   setOscillator: (n: OscillatorType) => void;
   setScaleName: React.Dispatch<React.SetStateAction<string>>;
 };
 const Dropdowns: React.FC<DropdownProps> = ({
   oscillator,
-  scale,
+  scaleName,
   setOscillator,
   setScaleName,
 }) => {
@@ -394,7 +394,7 @@ const Dropdowns: React.FC<DropdownProps> = ({
     {
       id: 'scale',
       label: 'Scale',
-      defaultValue: 'major',
+      defaultValue: scaleName,
       cb: (target: string) => setScaleName(target),
       options: ['major', 'minor', 'suspended'],
     },
@@ -415,14 +415,15 @@ const Dropdowns: React.FC<DropdownProps> = ({
             <select
               name={id}
               id={id}
-              defaultValue={defaultValue}
+              // defaultValue={defaultValue}
               onChange={e => cb(e.currentTarget.value)}
+              value={defaultValue}
             >
               {options.map(thing => (
                 <option
                   value={thing}
                   key={thing}
-                  selected={thing === defaultValue}
+                  // selected={thing === defaultValue}
                 >
                   {thing}
                 </option>

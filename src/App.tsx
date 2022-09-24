@@ -94,6 +94,9 @@ function App() {
     Tone.Transport.bpm.value = currentBPM;
   }, [currentBPM]);
   React.useEffect(() => {
+    setCurrentScale(SCALES[scaleName]);
+  }, [scaleName]);
+  React.useEffect(() => {
     if (loop.current) {
       loop.current.dispose();
     }
@@ -148,7 +151,7 @@ function App() {
           <div className="secondary-ui">
             <Dropdowns
               oscillator={oscillator}
-              scale={currentScale}
+              scaleName={scaleName}
               setOscillator={setOscillator}
               setScaleName={setScaleName}
             />
@@ -185,13 +188,13 @@ function App() {
         noteMatrix={noteMatrix}
         bpm={currentBPM}
         waveform={oscillator}
-        scale={currentScale}
+        scaleName={scaleName}
         vol={currentVol}
         setCurrentBPM={setCurrentBPM}
         setCurrentVol={setCurrentVol}
         setOscillator={setOscillator}
         setNoteMatrix={setNoteMatrix}
-        setCurrentScale={setCurrentScale}
+        setScaleName={setScaleName}
       />
     </>
   );

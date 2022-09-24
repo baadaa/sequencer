@@ -201,7 +201,7 @@ type DataSetters = {
   setCurrentVol?: React.Dispatch<React.SetStateAction<number>>;
   setOscillator?: React.Dispatch<React.SetStateAction<OscillatorType>>;
   setNoteMatrix?: React.Dispatch<React.SetStateAction<Array<Array<number>>>>;
-  setCurrentScale?: React.Dispatch<React.SetStateAction<Array<string>>>;
+  setScaleName?: React.Dispatch<React.SetStateAction<string>>;
 };
 
 type ModalProps = DataSetters & {
@@ -212,7 +212,7 @@ type ModalProps = DataSetters & {
   bpm?: number;
   waveform?: OscillatorType;
   vol?: number;
-  scale?: Array<string>;
+  scaleName?: string;
 };
 type TrackData = {
   name: string;
@@ -222,7 +222,7 @@ type TrackData = {
   bpm: number;
   waveform: OscillatorType;
   vol: number;
-  scale: Array<string>;
+  scaleName: string;
 };
 const SaveAction: React.FC<ModalProps> = ({
   close,
@@ -230,7 +230,7 @@ const SaveAction: React.FC<ModalProps> = ({
   bpm = 80,
   waveform = 'sine',
   vol = 1,
-  scale = [''],
+  scaleName = '',
 }) => {
   const [title, setTitle] = React.useState('');
   const [hasError, setHasError] = React.useState(false);
@@ -255,7 +255,7 @@ const SaveAction: React.FC<ModalProps> = ({
       bpm,
       vol,
       waveform,
-      scale,
+      scaleName,
       savedAt:
         new Date().toLocaleDateString() +
         ', ' +
@@ -307,7 +307,7 @@ const LoadAction: React.FC<ModalProps> = ({
   setCurrentVol,
   setOscillator,
   setNoteMatrix,
-  setCurrentScale,
+  setScaleName,
 }) => {
   const [trackList, setTrackList] = React.useState<Array<TrackData>>([]);
   const noData = trackList.length === 0;
@@ -343,14 +343,14 @@ const LoadAction: React.FC<ModalProps> = ({
       bpm = 80,
       vol = 1,
       waveform = 'sine',
-      scale = [''],
+      scaleName = 'major',
       track = [[]],
     } = item;
     setCurrentBPM!(bpm);
     setCurrentVol!(vol);
     setOscillator!(waveform);
     setNoteMatrix!(track);
-    setCurrentScale!(scale);
+    setScaleName!(scaleName);
     cancel();
   };
   React.useEffect(() => {
@@ -419,14 +419,14 @@ const Modal: React.FC<ModalProps> = ({
   close,
   noteMatrix,
   bpm,
-  scale,
+  scaleName,
   waveform,
   vol,
   setCurrentBPM,
   setCurrentVol,
   setOscillator,
   setNoteMatrix,
-  setCurrentScale,
+  setScaleName,
 }) => {
   React.useEffect(() => {
     if (!localStorageIsAvailable('bald_tones'))
@@ -438,7 +438,7 @@ const Modal: React.FC<ModalProps> = ({
         <SaveAction
           close={close}
           bpm={bpm}
-          scale={scale}
+          scaleName={scaleName}
           waveform={waveform}
           vol={vol}
           noteMatrix={noteMatrix}
@@ -451,7 +451,7 @@ const Modal: React.FC<ModalProps> = ({
           setCurrentVol={setCurrentVol}
           setOscillator={setOscillator}
           setNoteMatrix={setNoteMatrix}
-          setCurrentScale={setCurrentScale}
+          setScaleName={setScaleName}
         />
       )}
     </ModalStyle>
