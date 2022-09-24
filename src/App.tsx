@@ -7,6 +7,7 @@ import {
   PlaybackButtons,
   SliderControls,
   Dropdowns,
+  DataButtons,
 } from './components/InterfaceElements';
 
 import { synth, playSingleNote } from './components/ToneSettings';
@@ -14,7 +15,6 @@ import { defaultNoteMatrix, emptyBeat, SCALES } from './data';
 import { OscillatorType } from './types/soundTypes';
 import { normalizeVolume } from './utils';
 import WaveForm from './components/WaveForm';
-import { IconSave, IconLoad } from './components/Icons';
 
 import Modal from './components/Modals';
 
@@ -25,10 +25,11 @@ function App() {
   const [isPlaying, setIsPlaying] = React.useState(false);
   const [currentBeat, setCurrentBeat] = React.useState(0);
   const [currentBPM, setCurrentBPM] = React.useState(120);
-  const [currentVol, setCurrentVol] = React.useState(0);
+  const [currentVol, setCurrentVol] = React.useState(-0.5);
   const [oscillator, setOscillator] = React.useState<OscillatorType>('sine');
   const [noteMatrix, setNoteMatrix] = React.useState(defaultNoteMatrix);
-  const [currentScale, setCurrentScale] = React.useState(SCALES.major);
+  const [scaleName, setScaleName] = React.useState('major');
+  const [currentScale, setCurrentScale] = React.useState(SCALES[scaleName]);
   const [modalIsOpen, setModalIsOpen] = React.useState(false);
   const [modalAction, setModalAction] = React.useState('save');
   const loop = React.useRef<Loop | null>(null);
@@ -105,7 +106,14 @@ function App() {
           activeNotes: noteMap[beat].length,
         });
         const vol = normalized * (1 - currentVol);
-        console.log(vol, currentVol);
+        console.log(
+          'vol:',
+          vol,
+          'currentVol:',
+          currentVol,
+          'normalized:',
+          normalized
+        );
         synth.volume.setValueAtTime(vol, time);
         synth.triggerAttackRelease(noteMap[beat], '16n', time);
       },
@@ -140,8 +148,9 @@ function App() {
           <div className="secondary-ui">
             <Dropdowns
               oscillator={oscillator}
+              scale={currentScale}
               setOscillator={setOscillator}
-              setCurrentScale={setCurrentScale}
+              setScaleName={setScaleName}
             />
             <div className="buttons">
               <SliderControls
@@ -151,16 +160,7 @@ function App() {
                 setCurrentVol={setCurrentVol}
                 setCurrentBPM={setCurrentBPM}
               />
-              <button
-                type="button"
-                data-action="save"
-                onClick={() => openModal('save')}
-              >
-                <IconSave /> Save
-              </button>
-              <button type="button" data-action="load">
-                <IconLoad /> Load
-              </button>
+              <DataButtons openModal={openModal} />
             </div>
           </div>
         </div>
@@ -183,6 +183,15 @@ function App() {
         action={modalAction}
         close={() => setModalIsOpen(false)}
         noteMatrix={noteMatrix}
+        bpm={currentBPM}
+        waveform={oscillator}
+        scale={currentScale}
+        vol={currentVol}
+        setCurrentBPM={setCurrentBPM}
+        setCurrentVol={setCurrentVol}
+        setOscillator={setOscillator}
+        setNoteMatrix={setNoteMatrix}
+        setCurrentScale={setCurrentScale}
       />
     </>
   );

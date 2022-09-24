@@ -109,6 +109,7 @@ body.light {
   --input-active: var(--cyan500);
   --input-icon: var(--cyan400);
   --input-label: var(--cyan200);
+  --ui-danger: var(--red800);
   --input-accent: var(--yellow500);
   --input-value: #fff;
   background: linear-gradient(

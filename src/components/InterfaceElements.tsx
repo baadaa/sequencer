@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import Slider from 'react-input-slider';
 import { IconPlay, IconStop, IconTrash, IconSave, IconLoad } from './Icons';
 import { OscillatorType } from '../types/soundTypes';
-import { SCALES } from '../data';
 
 const Wrapper = styled.div`
   position: relative;
@@ -305,9 +304,9 @@ const SliderControls: React.FC<SliderProps> = ({
     {
       name: 'VOL',
       value: currentVol,
-      format: Math.round(currentVol * 10) + 11,
-      min: -1,
-      max: 0.5,
+      format: Math.round(currentVol * 10) + 20,
+      min: -2,
+      max: 0,
       step: 0.1,
       cb: setCurrentVol,
     },
@@ -381,20 +380,22 @@ const SliderControls: React.FC<SliderProps> = ({
 
 type DropdownProps = {
   oscillator: OscillatorType;
+  scale: Array<string>;
   setOscillator: (n: OscillatorType) => void;
-  setCurrentScale: (w: Array<string>) => void;
+  setScaleName: React.Dispatch<React.SetStateAction<string>>;
 };
 const Dropdowns: React.FC<DropdownProps> = ({
   oscillator,
+  scale,
   setOscillator,
-  setCurrentScale,
+  setScaleName,
 }) => {
   const controls = [
     {
       id: 'scale',
       label: 'Scale',
       defaultValue: 'major',
-      cb: (target: string) => setCurrentScale(SCALES[target]),
+      cb: (target: string) => setScaleName(target),
       options: ['major', 'minor', 'suspended'],
     },
     {
@@ -418,7 +419,11 @@ const Dropdowns: React.FC<DropdownProps> = ({
               onChange={e => cb(e.currentTarget.value)}
             >
               {options.map(thing => (
-                <option value={thing} key={thing}>
+                <option
+                  value={thing}
+                  key={thing}
+                  selected={thing === defaultValue}
+                >
                   {thing}
                 </option>
               ))}
@@ -429,4 +434,17 @@ const Dropdowns: React.FC<DropdownProps> = ({
     </div>
   );
 };
-export { Wrapper, PlaybackButtons, SliderControls, Dropdowns };
+type DataButtonProp = {
+  openModal: (target: string) => void;
+};
+const DataButtons: React.FC<DataButtonProp> = ({ openModal }) => (
+  <>
+    <button type="button" data-action="save" onClick={() => openModal('save')}>
+      <IconSave /> Save
+    </button>
+    <button type="button" data-action="load" onClick={() => openModal('load')}>
+      <IconLoad /> Load
+    </button>
+  </>
+);
+export { Wrapper, PlaybackButtons, SliderControls, Dropdowns, DataButtons };
