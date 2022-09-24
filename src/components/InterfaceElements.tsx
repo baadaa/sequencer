@@ -415,16 +415,11 @@ const Dropdowns: React.FC<DropdownProps> = ({
             <select
               name={id}
               id={id}
-              // defaultValue={defaultValue}
               onChange={e => cb(e.currentTarget.value)}
               value={defaultValue}
             >
               {options.map(thing => (
-                <option
-                  value={thing}
-                  key={thing}
-                  // selected={thing === defaultValue}
-                >
+                <option value={thing} key={thing}>
                   {thing}
                 </option>
               ))}

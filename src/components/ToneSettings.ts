@@ -13,5 +13,7 @@ export const synth = new Tone.PolySynth().connect(filter).set({
   },
 });
 
-export const playSingleNote = (note = '') =>
+export const playSingleNote = (note = '') => {
   synth.triggerAttackRelease(note, '16n');
+  console.log(note);
+};
