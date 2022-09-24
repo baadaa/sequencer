@@ -11,6 +11,7 @@ const Wrapper = styled.div`
   background-color: var(--wrapper-bg);
   box-shadow: var(--hover-shadow);
   border-radius: 1.2rem;
+  border: 1px solid var(--wrapper-border);
   display: flex;
   h1 {
     font-size: 1.2rem;

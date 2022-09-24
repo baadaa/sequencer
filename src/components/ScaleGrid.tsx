@@ -5,7 +5,8 @@ const GridStyle = styled.div`
   --gap: 0.5rem;
   border-radius: 0.8rem;
   width: 52.7rem;
-  background-color: #fff;
+  background-color: var(--grid-bg);
+  border: 1px solid var(--grid-border);
   height: 50.5rem;
   display: flex;
   padding: 1.5rem;
@@ -16,9 +17,9 @@ const GridStyle = styled.div`
     flex-direction: column;
     &[data-active='1'] {
       .note {
-        background: var(--cyan200);
+        background: var(--empty-note-current);
         &[data-on='1'] {
-          background: var(--cyan600);
+          background: var(--active-note-current);
         }
       }
     }
@@ -39,9 +40,9 @@ const GridStyle = styled.div`
     border: none;
     outline: none;
     cursor: pointer;
-    background: var(--cyan100);
+    background: var(--empty-note);
     &[data-on='1'] {
-      background: var(--cyan500);
+      background: var(--active-note);
     }
   }
   .head {

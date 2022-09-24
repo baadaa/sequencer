@@ -61,6 +61,7 @@ const ModalStyle = styled.div`
       padding: 0.8rem 1.2rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
+      background-color: var(--modal-input-bg);
       position: relative;
       &[data-error='true'] {
         border-color: var(--red500);
@@ -155,7 +156,7 @@ const ModalStyle = styled.div`
         font-size: 1rem;
         opacity: 0.7;
       }
-      background-color: #fff;
+      background-color: var(--track-list-bg);
       .buttons {
         margin: 0;
         flex-shrink: 0;

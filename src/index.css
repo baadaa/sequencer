@@ -1,9 +1,7 @@
 :root {
-  --pale-shadow: 0 2px 15px rgba(0, 0, 0, 0.075);
   --base-shadow: 0 1px 10px rgba(0, 0, 0, 0.2);
   --hover-shadow: 3px 7px 15px rgba(0, 0, 0, 0.1),
     -1px 3px 25px rgba(0, 0, 0, 0.1);
-  --inset-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
   --cyan900: #0a2129;
   --cyan800: #154251;
   --cyan700: #1f637a;
@@ -54,7 +52,6 @@
   --coolGray200: #C6C8D2;
   --coolGray100: #E3E4E8;
   --coolGray50: #F1F1F4;
-
 }
 * {
   transition: opacity 0.2s ease-out, background-color 0.2s ease-out,
@@ -96,11 +93,17 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-body.light {
+  --focus-shadow: 0px 1px 15px rgba(255, 100, 100, 0.4);
   --gradient-green-end: var(--green500);
   --gradient-cyan-end: var(--cyan500);
   --wrapper-bg: var(--cyan800);
+  --wrapper-border: var(--cyan900);
+  --grid-bg: #fff;
+  --grid-border: var(--coolGray100);
+  --empty-note: var(--cyan100);
+  --empty-note-current: var(--cyan200);
+  --active-note: var(--cyan500);
+  --active-note-current: var(--cyan600);
   --play-btn: var(--cyan500);
   --trash-btn: var(--red300);
   --title-color: #fff;
@@ -119,16 +122,48 @@ body.light {
   );
   --modal-bg: rgba(10, 33, 41, 0.8);
   --modal-dialogue: var(--coolGray200);
+  --modal-input-bg: #fff;
   --modal-text: var(--coolGray700);
   --modal-border: var(--coolGray300);
+  --track-list-bg: #fff;
+  --colormode-sun: var(--cyan500);
+  --colormode-moon: var(--cyan300);
+  --button-bg-colormode: var(--cyan100);
+  --button-bg-colormode-border: var(--cyan200);
+  --button-bg-colormode-hover: var(--cyan50);
+  --about: rgba(255,255,255,.4);
+  --github: var(--green600);
 }
+
 body.dark {
+  --focus-shadow: 0px 1px 15px rgba(255, 255, 100, 0.4);
   --bg: var(--coolGray900);
-  background-color: var(--bg);
+  --wrapper-bg: var(--cyan900);
+  --wrapper-border: var(--cyan800);
+  --grid-bg: var(--coolGray900);
+  --grid-border: var(--coolGray700);
+  --empty-note: var(--cyan800);
+  --empty-note-current: var(--cyan700);
+  --active-note: var(--cyan600);
+  --active-note-current: var(--cyan500);
+  background: var(--bg);
+  --modal-bg: rgba(10, 33, 41, 0.9);
+  --modal-dialogue: var(--coolGray900);
+  --modal-input-bg: var(--coolGray800);
+  --modal-text: var(--coolGray300);
+  --modal-border: var(--coolGray700);
+  --track-list-bg: var(--coolGray800);
   color: var(--coolGray200);
   --title-color: #fff;
   --text-color: var(--coolGray200);
   --menu-bg: var(--cyan800);
+  --colormode-sun: var(--yellow300);
+  --colormode-moon: var(--yellow500);
+  --button-bg-colormode: var(--cyan700);
+  --button-bg-colormode-border: var(--cyan600);
+  --button-bg-colormode-hover: var(--cyan600);
+  --about: var(--coolGray600);
+  --github: var(--coolGray900);
 }
 *,
 * > * {

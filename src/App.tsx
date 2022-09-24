@@ -13,15 +13,21 @@ import {
 import { synth, playSingleNote } from './components/ToneSettings';
 import { defaultNoteMatrix, emptyBeat, SCALES } from './data';
 import { OscillatorType } from './types/soundTypes';
-import { normalizeVolume } from './utils';
+import {
+  normalizeVolume,
+  localStorageIsAvailable,
+  setLocalStorage,
+} from './utils';
 import WaveForm from './components/WaveForm';
-
 import Modal from './components/Modals';
+
+import { ColorModeButton, GitHub } from './components/Miscellaneous';
 
 function App() {
   type Loop = {
     dispose: any;
   };
+  const [isDark, setIsDark] = React.useState(false);
   const [isPlaying, setIsPlaying] = React.useState(false);
   const [currentBeat, setCurrentBeat] = React.useState(0);
   const [currentBPM, setCurrentBPM] = React.useState(120);
@@ -84,6 +90,26 @@ function App() {
     Tone.Transport.on('stop', () => setCurrentBeat(0));
   }, []);
   React.useEffect(() => {
+    if (!localStorageIsAvailable('bald_tones_isDark')) {
+      setIsDark(false);
+      setLocalStorage('bald_tones_isDark', JSON.stringify(false));
+      return;
+    }
+    const savedMode = JSON.parse(
+      window.localStorage.getItem('bald_tones_isDark') as string
+    );
+    if (savedMode === true) {
+      document.body.classList.add('dark');
+      setIsDark(true);
+    } else {
+      document.body.classList.remove('dark');
+      setIsDark(false);
+    }
+  }, []);
+  React.useEffect(() => {
+    setLocalStorage('bald_tones_isDark', JSON.stringify(isDark));
+  }, [isDark]);
+  React.useEffect(() => {
     synth.set({
       oscillator: {
         type: oscillator,
@@ -124,6 +150,8 @@ function App() {
   return (
     <>
       <WaveForm waveform={oscillator} />
+      <GitHub />
+      <ColorModeButton isDark={isDark} setIsDark={setIsDark} />
       <Wrapper>
         <div className="grid-area">
           <h1>Pentatonic Sequencer</h1>
