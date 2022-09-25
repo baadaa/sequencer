@@ -43,6 +43,7 @@ const Wrapper = styled.div`
       align-items: center;
       border: none;
       cursor: pointer;
+      outline: none;
       &.playback {
         background-color: var(--play-btn);
       }
@@ -51,6 +52,9 @@ const Wrapper = styled.div`
       }
       &:hover {
         transform: scale(1.05);
+      }
+      &:focus {
+        box-shadow: var(--bright-focus-shadow);
       }
     }
     button + button {
@@ -151,6 +155,9 @@ const Wrapper = styled.div`
       width: 100%;
       margin-right: 1.5rem;
       appearance: none;
+      &:focus {
+        box-shadow: var(--bright-focus-shadow);
+      }
     }
     button {
       background-color: var(--input-ui);
@@ -178,6 +185,9 @@ const Wrapper = styled.div`
         svg path {
           fill: var(--wrapper-bg);
         }
+      }
+      &:focus {
+        box-shadow: var(--bright-focus-shadow);
       }
     }
     button + button {

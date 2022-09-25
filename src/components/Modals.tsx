@@ -99,6 +99,9 @@ const ModalStyle = styled.div`
         transform: translateY(-1px);
         box-shadow: var(--base-shadow);
       }
+      &:focus {
+        box-shadow: var(--dark-focus-shadow);
+      }
       &.save {
         background-color: var(--input-ui);
         color: #fff;

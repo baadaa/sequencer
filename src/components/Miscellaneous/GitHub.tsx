@@ -4,6 +4,9 @@ const GitHubLink = styled.a`
   &:hover svg {
     transform: scale(1.05);
   }
+  &:focus {
+    box-shadow: var(--focus-shadow);
+  }
   &:hover .octo-arm {
     animation: octocat-wave 560ms ease-in-out infinite;
   }

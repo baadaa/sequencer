@@ -97,6 +97,7 @@ const ScaleGrid: React.FC<GridProps> = ({
         {scale.map((note, j) => (
           <button
             className="note"
+            tabIndex={-1}
             key={j}
             onClick={tick}
             data-note={note}
