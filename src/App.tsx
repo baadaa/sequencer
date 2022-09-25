@@ -216,6 +216,20 @@ function App() {
         setNoteMatrix={setNoteMatrix}
         setScaleName={setScaleName}
       />
+      <a
+        style={{
+          position: 'absolute',
+          bottom: '2rem',
+          right: '2rem',
+          color: '#fff',
+          textDecoration: 'none',
+        }}
+        target="_blank"
+        href="https://bald.design"
+        rel="noreferrer"
+      >
+        &copy; {new Date().getFullYear()} by <strong>Bumhan Yu</strong>
+      </a>
     </>
   );
 }

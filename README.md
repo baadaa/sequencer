@@ -8,7 +8,7 @@ A simple step sequencer based on pentatonic scales. Click any grid item to toggl
 
 ### TODOs
 
-- [ ] State persistence via `localStorage`
+- [ ] Easy sharing option (e.g. via URL query param, etc)
 - [ ] Introduce more themes (e.g. colorways, typefaces, etc)
 - [ ] Clean up code and beef up visual styles
 
