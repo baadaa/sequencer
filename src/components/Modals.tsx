@@ -268,6 +268,10 @@ const SaveAction: React.FC<ModalProps> = ({
     clear();
     close();
   };
+  const checkEnter = (e: React.KeyboardEvent): void => {
+    if (e.key === 'Enter') save();
+    if (e.key === 'Escape') cancel();
+  };
   React.useEffect(() => {
     if (title !== '') setHasError(false);
   }, [title]);
@@ -288,6 +292,7 @@ const SaveAction: React.FC<ModalProps> = ({
           value={title}
           data-error={hasError}
           onChange={e => setTitle(e.currentTarget.value)}
+          onKeyDown={checkEnter}
         />
       </label>
       <span>Your music will be saved in your browser's local storage.</span>
