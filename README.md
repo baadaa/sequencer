@@ -1,5 +1,7 @@
 # Pentatonic Sequencer
 
+!(Pentatonic Scale Step Sequencer preview)[https://sequencer.bald.design/og-sequencer.jpg]
+
 ### What it is
 
 A simple step sequencer based on pentatonic scales. Click any grid item to toggle a note to create a pleasant-sounding music. Users can change oscillator waveforms, choose a preferred scale, and adjust volume and BPM.
