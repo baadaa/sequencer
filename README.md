@@ -1,6 +1,6 @@
 # Pentatonic Sequencer
 
-!(Pentatonic Scale Step Sequencer preview)[https://sequencer.bald.design/og-sequencer.jpg]
+![Pentatonic Scale Step Sequencer preview](https://sequencer.bald.design/og-sequencer.jpg)
 
 ### What it is
 
