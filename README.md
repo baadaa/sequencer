@@ -4,7 +4,7 @@
 
 A simple step sequencer based on pentatonic scales. Click any grid item to toggle a note to create a pleasant-sounding music. Users can change oscillator waveforms, choose a preferred scale, and adjust volume and BPM.
 
-- Built with [Create React App](https://github.com/facebook/create-react-app) in TypeScript flavor, [Styled-components](https://www.styled-components.com/), and [CSS Custom Properties](https://developer.mozilla.org/en-US/docs/Web/CSS/--*)
+- Built with [Tone.js](https://tonejs.github.io/), [Create React App](https://github.com/facebook/create-react-app) in TypeScript flavor, [Styled-components](https://www.styled-components.com/), and [CSS Custom Properties](https://developer.mozilla.org/en-US/docs/Web/CSS/--*)
 
 ### TODOs
 
